@@ -29,7 +29,7 @@
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="plain" image="minus.arrow.trianglehead.counterclockwise" catalog="system"/>
                                 <connections>
-                                    <action selector="minusCount:" destination="BYZ-38-t0r" eventType="touchUpInside" id="SRR-vg-5Sj"/>
+                                    <action selector="minusButtonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="txj-4T-S2K"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7UM-hV-fTy">
@@ -38,7 +38,7 @@
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="plain" image="arrow.trianglehead.2.counterclockwise.rotate.90" catalog="system" title=" reset"/>
                                 <connections>
-                                    <action selector="resetCount:" destination="BYZ-38-t0r" eventType="touchUpInside" id="mWb-9B-CKL"/>
+                                    <action selector="resetButtonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="uSy-aU-O5F"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Um2-nN-7MC">
@@ -47,7 +47,7 @@
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="plain" image="plus.arrow.trianglehead.clockwise" catalog="system"/>
                                 <connections>
-                                    <action selector="plusCount:" destination="BYZ-38-t0r" eventType="touchUpInside" id="H2d-Ls-gem"/>
+                                    <action selector="plusButtonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="dVM-oF-FcQ"/>
                                 </connections>
                             </button>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" text="История изменений:" translatesAutoresizingMaskIntoConstraints="NO" id="wAx-w3-hdl">
@@ -58,16 +58,26 @@
                                 <fontDescription key="fontDescription" name="Palatino-Roman" family="Palatino" pointSize="17"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ouP-Ln-8lQ">
+                                <rect key="frame" x="76" y="584" width="240" height="53"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="plain" image="xmark.circle" catalog="system" title=" Очистить историю"/>
+                                <connections>
+                                    <action selector="clearButtonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="VBU-iN-Nhf"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     </view>
                     <connections>
-                        <outlet property="changesHistory" destination="wAx-w3-hdl" id="RFp-GJ-lAM"/>
-                        <outlet property="counter" destination="huD-r3-TWB" id="agr-kn-Ugi"/>
-                        <outlet property="minusButton" destination="utI-8Z-tmm" id="KmD-9O-1fo"/>
-                        <outlet property="plusButton" destination="Um2-nN-7MC" id="Tkm-Hg-dnq"/>
-                        <outlet property="resetButton" destination="Um2-nN-7MC" id="pSz-DU-TL3"/>
+                        <outlet property="clearButton" destination="ouP-Ln-8lQ" id="hRs-Lt-wK1"/>
+                        <outlet property="counterLabel" destination="huD-r3-TWB" id="6HS-yc-V2o"/>
+                        <outlet property="historyTextView" destination="wAx-w3-hdl" id="Zqf-DD-AkG"/>
+                        <outlet property="minusButton" destination="utI-8Z-tmm" id="Tar-dj-6GO"/>
+                        <outlet property="plusButton" destination="Um2-nN-7MC" id="JOB-MS-nwo"/>
+                        <outlet property="resetButton" destination="7UM-hV-fTy" id="55m-Ph-oQm"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -79,6 +89,7 @@
         <image name="arrow.trianglehead.2.counterclockwise.rotate.90" catalog="system" width="128" height="117"/>
         <image name="minus.arrow.trianglehead.counterclockwise" catalog="system" width="119" height="128"/>
         <image name="plus.arrow.trianglehead.clockwise" catalog="system" width="119" height="128"/>
+        <image name="xmark.circle" catalog="system" width="128" height="123"/>
         <systemColor name="labelColor">
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

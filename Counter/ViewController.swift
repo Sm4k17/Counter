@@ -9,87 +9,147 @@ import UIKit
 
 final class ViewController: UIViewController {
     
-    private var countNumber: Int = .zero {
+    // MARK: - Properties
+    private var counterValue: Int = 0 {
         didSet {
             updateCounterLabel()
+            updateButtonsState()
         }
     }
     
-    @IBOutlet weak private var changesHistory: UITextView!
-    @IBOutlet weak private var counter: UILabel!
-    @IBOutlet weak private var minusButton: UIButton!
+    // MARK: - Outlets
+    @IBOutlet private weak var historyTextView: UITextView!
+    @IBOutlet private weak var counterLabel: UILabel!
+    @IBOutlet private weak var minusButton: UIButton!
+    @IBOutlet private weak var clearButton: UIButton!
+    @IBOutlet private weak var resetButton: UIButton!
+    @IBOutlet private weak var plusButton: UIButton!
     
-    @IBOutlet weak private var resetButton: UIButton!
-    
-    @IBOutlet weak private var plusButton: UIButton!
-    
+    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
     }
     
+    // MARK: - UI Setup
     private func setupUI() {
-        view.backgroundColor = .systemYellow
-        changesHistory.backgroundColor = .systemYellow
-        counter.text = "0"
-        plusButton.tintColor = .red
-        minusButton.tintColor = .blue
+        configureView()
+        configureHistoryTextView()
+        configureCounterLabel()
+        configureButtons()
+        updateClearButtonState()
+    }
+    
+    private func configureView() {
+        view.backgroundColor = .systemTeal
+        historyTextView.backgroundColor = .systemTeal
+    }
+    
+    
+    private func configureHistoryTextView() {
+        historyTextView.textColor = .white
+        historyTextView.font = .monospacedSystemFont(ofSize: 14, weight: .regular)
+        historyTextView.text = "История изменений:"
+        historyTextView.isEditable = false
+        historyTextView.isSelectable = true
+        historyTextView.isScrollEnabled = true
+        historyTextView.showsVerticalScrollIndicator = true
+        historyTextView.textContainerInset = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+    }
+    
+    private func configureCounterLabel() {
+        counterLabel.text = "Значение счётчика: 0"
+        counterLabel.textColor = .white
+    }
+    
+    private func configureButtons() {
+        plusButton.tintColor = .systemRed
+        minusButton.tintColor = .systemBlue
+        resetButton.tintColor = .systemOrange
+        clearButton.tintColor = .systemGray
         
-        configureTextView()
+        updateButtonsState()
     }
     
-    private func configureTextView() {
-        changesHistory.text = "История изменений:"
-        changesHistory.isEditable = false // Запрет редактирования
-        changesHistory.isSelectable = true // Разрешение выделения текста
-        changesHistory.isScrollEnabled = true // Включение прокрутки
-        changesHistory.showsVerticalScrollIndicator = true // Показ скролл-бара
-        changesHistory.font = UIFont.systemFont(ofSize: 14) // Шрифт
-        changesHistory.textContainerInset = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8) // Отступы
+    private func updateButtonsState() {
+        minusButton.isEnabled = counterValue > 0
+        resetButton.isEnabled = counterValue != 0
+        plusButton.isEnabled = counterValue < Int.max
     }
     
+    // MARK: - Counter Logic
     private func updateCounterLabel() {
-        counter.text = "Значение счётчика: \(countNumber)"
+        counterLabel.text = "Значение счётчика: \(counterValue)"
     }
     
-    private func dateFormat() -> String {
+    private static let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-        return formatter.string(from: Date())
-    }
+        formatter.timeZone = .current
+        formatter.locale = Locale(identifier: "ru_RU")
+        return formatter
+    }()
     
     private func addHistoryEntry(_ message: String) {
-        let newEntry = "\n\(dateFormat()) \(message)"
-        changesHistory.text += newEntry
+        let newEntry = "\n[\(ViewController.dateFormatter.string(from: Date()))] \(message)"
+        let attributedNewEntry = NSMutableAttributedString(string: newEntry)
+        historyTextView.textStorage.append(attributedNewEntry)
+        
+        historyTextView.textColor = .white
+        historyTextView.font = .monospacedSystemFont(ofSize: 14, weight: .regular)
+        historyTextView.textContainerInset = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+        updateClearButtonState()
+        
         scrollToBottom()
     }
     
     private func scrollToBottom() {
-        guard !changesHistory.text.isEmpty else { return }
-        
-        let location = changesHistory.text.count - 1
-        let range = NSRange(location: location, length: 1)
-        changesHistory.scrollRangeToVisible(range)
+        let range = NSRange(location: historyTextView.text.count - 1, length: 1)
+        historyTextView.scrollRangeToVisible(range)
     }
     
-    @IBAction private func minusCount(_ sender: Any) {
-        if countNumber > 0 {
-            countNumber -= 1
-            addHistoryEntry("Значение изменено на -1")
+    private func updateClearButtonState() {
+        let isHistoryEmpty = historyTextView.text == "История изменений:" || historyTextView.text.isEmpty
+        clearButton.isEnabled = !isHistoryEmpty
+    }
+    // MARK: - Actions
+    @IBAction private func minusButtonTapped(_ sender: UIButton) {
+        guard counterValue > 0 else {
+            addHistoryEntry("Попытка уменьшить значение ниже 0")
+            return }
+        counterValue -= 1
+        addHistoryEntry("Значение уменьшено на 1")
+    }
+    
+    @IBAction private func plusButtonTapped(_ sender: UIButton) {
+        if counterValue < Int.max {
+            counterValue += 1
+            addHistoryEntry("Значение увеличено на 1")
         } else {
-            addHistoryEntry("Попытка уменьшить значение счётчика ниже 0")
+            addHistoryEntry("Достигнуто максимальное значение")
         }
+        
     }
     
-    @IBAction private func plusCount(_ sender: Any) {
-        countNumber += 1
-        addHistoryEntry("Значение изменено на +1")
+    @IBAction private func resetButtonTapped(_ sender: UIButton) {
+        counterValue = 0
+        addHistoryEntry("Счётчик сброшен")
     }
     
-    @IBAction private func resetCount(_ sender: Any) {
-        countNumber = 0
-        addHistoryEntry("Значение сброшено")
+    @IBAction private func clearButtonTapped(_ sender: UIButton) {
+        let alert = UIAlertController(
+            title: "Очистить историю",
+            message: "Вы уверены, что хотите очистить историю изменений?",
+            preferredStyle: .alert
+        )
+        
+        alert.addAction(UIAlertAction(title: "Отмена", style: .cancel))
+        alert.addAction(UIAlertAction(title: "Очистить", style: .destructive) { _ in
+            self.historyTextView.text = "История изменений:"
+            self.counterValue = 0
+            self.updateClearButtonState()
+        })
+        
+        present(alert, animated: true)
     }
-    
 }
-
